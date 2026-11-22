@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us - Image Resizer</title>
+<meta name="description" content="Contact Image Resizer — questions, feedback or suggestions about the free online image resizer tool.">
+<link rel="canonical" href="https://simpleimageresizer.github.io/contact.html">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖼️</text></svg>">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="https://simpleimageresizer.github.io/"><span class="mark">🖼️</span>Image<b> Resizer</b></a>
+    <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="main">
+      <a href="https://simpleimageresizer.github.io/">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html" class="active">Contact</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="page">
+    <h1>Contact Us</h1>
+    <p>Have a question about the tool, found a bug, or have an idea to make it better? We would like to hear from you.</p>
+    <form class="contact" id="contactForm">
+      <label for="name">Your name</label>
+      <input type="text" id="name" name="name" placeholder="Your name" required>
+      <label for="email">Your email</label>
+      <input type="email" id="email" name="email" placeholder="Your email" required>
+      <label for="topic">Topic</label>
+      <select id="topic" name="topic">
+        <option>Question about the tool</option>
+        <option>Report a problem</option>
+        <option>Suggestion / feedback</option>
+        <option>Other</option>
+      </select>
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="6" placeholder="Write your message here&hellip;" required></textarea>
+      <button type="submit" class="btn-main">Send Message</button>
+    </form>
+    <p style="color:#6b7280;font-size:14px;margin-top:14px;">Sending opens your email app with the message ready to send to us. We usually reply within a few days.</p>
+    <p><a href="https://simpleimageresizer.github.io/">&larr; Back to the image resizer</a></p>
+  </div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© 2026 ImageResizer — Free online image resizer tool.</span>
+    <nav>
+      <a href="https://simpleimageresizer.github.io/">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </nav>
+  </div>
+</footer>
+<script>
+document.getElementById('contactForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var name = document.getElementById('name').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var topic = document.getElementById('topic').value;
+  var message = document.getElementById('message').value.trim();
+  var subject = encodeURIComponent('ImageResizer — ' + topic + ' (from ' + name + ')');
+  var body = encodeURIComponent(message + '\n\n— ' + name + ' (' + email + ')');
+  window.location.href = 'mailto:imosmanshahid@gmail.com?subject=' + subject + '&body=' + body;
+});
+</script>
+<script src="app.js"></script>
+</body>
+</html>

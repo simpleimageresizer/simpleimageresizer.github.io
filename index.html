@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Resizer - Resize Images Online Free</title>
+<meta name="description" content="Resize images online free — change width, height and format (JPG, PNG, WebP) and shrink file size right in your browser. Fast, private, no upload, no sign-up.">
+<meta name="keywords" content="image resizer, resize image, resize images online, image size reducer, jpg resizer, png resizer, webp resizer, compress image">
+<link rel="canonical" href="https://simpleimageresizer.github.io/">
+<meta property="og:title" content="Image Resizer - Resize Images Online Free">
+<meta property="og:description" content="Resize images free in your browser — change dimensions, format and file size. No upload, no sign-up.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://simpleimageresizer.github.io/">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖼️</text></svg>">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="https://simpleimageresizer.github.io/"><span class="mark">🖼️</span>Image<b> Resizer</b></a>
+    <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="main">
+      <a href="https://simpleimageresizer.github.io/" class="active">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>Image Resizer</h1>
+    <p class="lede">Resize any image in seconds — change its width, height or file size right in your browser. Free, private, no sign-up.</p>
+  </div>
+
+  <!-- Image Resizer tool -->
+  <div class="tool-card" id="tool">
+    <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Choose an image to resize">
+      <span class="drop-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M6 11l6 6 6-6"/><path d="M4 21h16"/></svg>
+      </span>
+      <p class="drop-text">Drag and drop your image here or click to browse</p>
+      <button type="button" class="btn-purple" id="selectImageBtn">Select Image</button>
+      <input type="file" id="fileInput" accept="image/*" hidden>
+    </div>
+
+    <div class="file-info" id="fileInfo">
+      <img id="previewImg" alt="Your chosen image">
+      <div>
+        <div class="file-name" id="fileName"></div>
+        <div class="file-meta" id="fileMeta"></div>
+      </div>
+    </div>
+
+    <div class="tool-divider"></div>
+
+    <div class="settings">
+      <div class="setting-row">
+        <label for="dimWidth">Dimensions</label>
+        <div class="setting-controls">
+          <div class="dim-inputs">
+            <input type="number" id="dimWidth" placeholder="Width" min="1" aria-label="Width">
+            <span class="times" aria-hidden="true">×</span>
+            <input type="number" id="dimHeight" placeholder="Height" min="1" aria-label="Height">
+            <select id="dimUnit" aria-label="Dimension unit">
+              <option value="pixel" selected>pixel</option>
+              <option value="percent">percent</option>
+            </select>
+          </div>
+          <label class="keep-aspect"><input type="checkbox" id="keepAspect" checked> Keep aspect ratio</label>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label for="formatSelect">Format</label>
+        <div class="setting-controls">
+          <select id="formatSelect" class="wide">
+            <option value="jpg" selected>JPG</option>
+            <option value="png">PNG</option>
+            <option value="webp">WebP</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label">Target File Size
+          <span class="help-icon" tabindex="0">?<span class="help-tip">Optional. We lower the quality just enough to get the file under this size. It works for JPG and WebP. PNG is lossless, so a target size does not apply to it.</span></span>
+        </span>
+        <div class="setting-controls">
+          <div class="target-inputs">
+            <input type="number" id="targetSize" placeholder="Leave empty for no limit" min="0" step="any" aria-label="Target file size">
+            <select id="targetUnit" aria-label="Target file size unit">
+              <option value="mb" selected>MB</option>
+              <option value="kb">KB</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="resize-action">
+      <button type="button" class="btn-purple resize-btn" id="resizeBtn" disabled>Resize Image</button>
+      <p class="resize-hint" id="resizeHint">Choose an image first to resize it.</p>
+      <p class="error-box" id="errorBox" role="alert"></p>
+    </div>
+
+    <div class="result" id="resultBox">
+      <h3>Your resized image</h3>
+      <img id="resultImg" alt="Resized image">
+      <p class="result-meta" id="resultDims"></p>
+      <p class="result-note" id="resultNote"></p>
+      <div class="result-actions">
+        <button type="button" class="btn-purple" id="downloadBtn">Download</button>
+        <button type="button" class="link-btn" id="againLink">Resize another image</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="block">
+    <h2>What is an image resizer?</h2>
+    <p>An image resizer is a tool that changes the size of a picture — its width and height in pixels, and often its file size too. A photo straight from a phone can be 4000 pixels wide and several megabytes heavy, which is far more than a website, a profile picture or an email attachment needs. Resizing brings it down to the size you actually want, so it loads faster, fits the place it belongs, and takes up less space.</p>
+    <p>This resizer works entirely in your browser. Your image is never uploaded to a server, never stored anywhere, and never seen by anyone else. Pick a file, set the size you want, and download the result — that is all there is to it.</p>
+  </section>
+
+  <section class="block">
+    <h2>How to resize an image in 4 steps</h2>
+    <ol class="steps">
+      <li><h3>Choose your image</h3><p>Drag your image into the box above, or tap Select Image and pick a file from your device. You will see a preview with its original size right away.</p></li>
+      <li><h3>Set the dimensions</h3><p>Type the width or height you want in pixels, or switch to percent to shrink it by a percentage. Keep aspect ratio is on by default, so your picture never gets stretched.</p></li>
+      <li><h3>Pick a format and a target size</h3><p>Choose JPG for photos, PNG when you need transparency, or WebP for the smallest files. If the file must stay under a certain size, enter a target file size and we will adjust the quality to fit it.</p></li>
+      <li><h3>Resize and download</h3><p>Tap Resize Image, check the preview and the new file size, then download your resized copy. Want another size? Tap Resize another image and start again.</p></li>
+    </ol>
+  </section>
+
+  <section class="block">
+    <h2>Why resize images?</h2>
+    <div class="cards">
+      <div class="card"><h3>Faster websites</h3><p>Large images are the most common reason pages load slowly. A resized image can be ten times smaller and look exactly the same on screen.</p></div>
+      <div class="card"><h3>Fit upload limits</h3><p>Forms, job portals, marketplaces and social profiles all cap image size. Resizing gets your photo under the limit without cropping it.</p></div>
+      <div class="card"><h3>Save storage</h3><p>Thousands of full-size photos fill a phone or a drive fast. Smaller copies keep the memories and free the space.</p></div>
+      <div class="card"><h3>Right size for the job</h3><p>A profile picture does not need 4000 pixels, and a thumbnail does not need a 5 MB file. Match the size to the place it will be shown.</p></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>JPG vs PNG vs WebP</h2>
+    <p class="intro">The format you pick changes the file size and what the image can do. Here is the short version:</p>
+    <table class="compare">
+      <tr><th>Format</th><th>Best for</th><th>Transparency</th><th>File size</th></tr>
+      <tr><td>JPG</td><td>Photos and everyday pictures</td><td>No</td><td>Small — quality can be lowered to shrink it</td></tr>
+      <tr><td>PNG</td><td>Logos, icons and screenshots</td><td>Yes</td><td>Larger — lossless, every pixel kept exactly</td></tr>
+      <tr><td>WebP</td><td>Web images where size matters</td><td>Yes</td><td>Smallest in most cases, with good quality</td></tr>
+    </table>
+    <p>Not sure? JPG is the safe default for photos. Pick WebP when you want the smallest file, and PNG only when you need a transparent background or pixel-perfect edges.</p>
+  </section>
+
+  <section class="block">
+    <h2>Tips for better results</h2>
+    <ul class="tips">
+      <li>Keep aspect ratio on unless you mean to change the shape — otherwise faces and circles look stretched.</li>
+      <li>Shrink by percent when you only know you want it "about half the size" — 50% is usually a good start.</li>
+      <li>For photos, JPG at the default quality is plenty for the web; only raise it if you can see the difference.</li>
+      <li>Enlarging a small image past its original size will make it blurry — resizing works best when you go smaller.</li>
+      <li>If a JPG is still too big for your target size, try smaller dimensions before anything else.</li>
+      <li>Start from the original, highest-quality file — resizing a copy of a copy loses detail twice.</li>
+    </ul>
+  </section>
+
+  <section class="block faq">
+    <h2>Frequently asked questions</h2>
+    <details><summary>Is this image resizer free?</summary>
+    <p>Yes, completely free. There are no limits on how many images you resize, no account and no watermark on your pictures.</p></details>
+    <details><summary>Are my images uploaded anywhere?</summary>
+    <p>No. Everything happens on your own device, in your browser. Your image is never sent to a server, stored or shared — when you close the page, it is gone.</p></details>
+    <details><summary>Which image formats can I resize?</summary>
+    <p>You can open any common image your browser can read — JPG, PNG, WebP, GIF, BMP and more. The result is saved as JPG, PNG or WebP, whichever you pick.</p></details>
+    <details><summary>Can I resize without losing quality?</summary>
+    <p>Going smaller always keeps the picture looking sharp, because you are throwing away extra pixels, not inventing new ones. PNG is lossless, so it keeps every pixel exactly. JPG and WebP lose a little quality to save space, and the target file size option controls how much.</p></details>
+    <details><summary>Is there a maximum image size?</summary>
+    <p>You can resize images up to 8,000 pixels on the longest side. Very large files from modern phones work fine — your browser does the work, so a slow connection is never a problem.</p></details>
+    <details><summary>Why is my PNG still large?</summary>
+    <p>PNG is lossless, so it cannot trade quality for size the way JPG and WebP can. If you need a small file, switch the format to JPG or WebP and set a target file size.</p></details>
+    <details><summary>Can I make an image bigger?</summary>
+    <p>Yes — you can enter dimensions larger than the original, or a percent over 100%. But an enlarged image will look softer and blurrier than the original, because no new detail can be added.</p></details>
+    <details><summary>What does target file size do?</summary>
+    <p>It is optional. If you set one, the tool lowers the JPG or WebP quality just enough to get the file under that size. If even the lowest quality is still over your target, it tells you so and gives you the smallest file it can make.</p></details>
+    <details><summary>Does it work on my phone?</summary>
+    <p>Yes. The tool works in any modern browser on phones, tablets, laptops and desktops — no app to install.</p></details>
+    <details><summary>What if the resized file is still too big?</summary>
+    <p>Try smaller dimensions first — halving the width and height cuts the file size far more than lowering quality. Switching from PNG to JPG or WebP helps too.</p></details>
+  </section>
+
+  <div class="cta">
+    <h2>Resize your first image</h2>
+    <p>Free, private, right here in your browser — no upload, no sign-up.</p>
+    <a class="btn" href="#tool">Resize an Image</a>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>© 2026 ImageResizer — Free online image resizer tool.</span>
+    <nav>
+      <a href="https://simpleimageresizer.github.io/">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </nav>
+  </div>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>
