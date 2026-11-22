@@ -232,18 +232,68 @@
     return !crop || (crop.fw >= 0.999 && crop.fh >= 0.999);
   }
 
-  /* Crop region in ORIGINAL image pixels, clamped to the image. */
+  function gcd(a, b) {
+    a = Math.abs(Math.round(a)); b = Math.abs(Math.round(b));
+    while (b) { var t = a % b; a = b; b = t; }
+    return a || 1;
+  }
+
+  /* Crop region in ORIGINAL image pixels, clamped to the image.
+     The rect's aspect always matches the exact target aspect (target.w /
+     target.h from computeTarget), so the drawn output is exactly the
+     target size with no stretching. The box fractions already carry that
+     aspect, but rounding them to whole pixels can shift it (e.g. a
+     1151 x 575 px box for an 800 x 400 px target), so the rect is sized
+     from the target aspect itself, keeping the box centre. A whole-image
+     crop still uses the whole image, exactly as before. */
   function cropSourceRect() {
     if (!orig) return { sx: 0, sy: 0, sw: 0, sh: 0 };
     if (!crop) return { sx: 0, sy: 0, sw: orig.width, sh: orig.height };
-    var sw = Math.round(crop.fw * orig.width);
-    var sh = Math.round(crop.fh * orig.height);
-    var sx = Math.round((crop.cx - crop.fw / 2) * orig.width);
-    var sy = Math.round((crop.cy - crop.fh / 2) * orig.height);
-    sx = clamp(sx, 0, orig.width - 1);
-    sy = clamp(sy, 0, orig.height - 1);
-    sw = clamp(sw, 1, orig.width - sx);
-    sh = clamp(sh, 1, orig.height - sy);
+    if (isWholeCrop()) return { sx: 0, sy: 0, sw: orig.width, sh: orig.height };
+
+    var target = computeTarget(true);
+    var aspect = target ? target.w / target.h : ratio();
+
+    // Box centre and size in original pixels (float, exact aspect).
+    var cx = crop.cx * orig.width;
+    var cy = crop.cy * orig.height;
+    var bw = crop.fw * orig.width;
+    var bh = crop.fh * orig.height;
+
+    // Force the exact target aspect, keeping the centre: shrink the side
+    // that is too long for the aspect.
+    if (bw / bh > aspect) { bw = bh * aspect; }
+    else { bh = bw / aspect; }
+
+    var sw, sh;
+    var exact = false;
+    if (target) {
+      // Integer rect with the exact target aspect: scale the target's own
+      // reduced ratio to the box. Use it when it stays within 2% of the
+      // box size, so the previewed crop and the downloaded crop match.
+      var g = gcd(target.w, target.h);
+      var uw = target.w / g, uh = target.h / g;
+      var k = Math.floor(Math.min(bw / uw, bh / uh));
+      if (k >= 1) {
+        var ew = k * uw, eh = k * uh;
+        if ((bw - ew) / bw <= 0.02 && (bh - eh) / bh <= 0.02) {
+          sw = ew; sh = eh; exact = true;
+        }
+      }
+    }
+    if (!exact) {
+      // Round the box to whole pixels, deriving one side from the other
+      // through the exact target aspect (never from the box's own rounded
+      // aspect), and keep the rect inside the box.
+      sw = Math.max(1, Math.round(bw));
+      sh = Math.max(1, Math.round(sw / aspect));
+      if (sh > bh) { sh = Math.max(1, Math.floor(bh)); sw = Math.max(1, Math.round(sh * aspect)); }
+      if (sw > bw) { sw = Math.max(1, Math.floor(bw)); sh = Math.max(1, Math.round(sw / aspect)); }
+    }
+
+    // Centre the rect on the box centre, keeping it inside the image.
+    var sx = clamp(Math.round(cx - sw / 2), 0, orig.width - sw);
+    var sy = clamp(Math.round(cy - sh / 2), 0, orig.height - sh);
     return { sx: sx, sy: sy, sw: sw, sh: sh };
   }
 
@@ -260,7 +310,10 @@
   function updateCaption() {
     if (!orig || !crop) return;
     if (isWholeCrop()) {
-      cropCaption.textContent = 'Whole image will be used — to crop, uncheck Keep aspect ratio and set a different width and height.';
+      var wholeTarget = computeTarget(true);
+      var wholeText = 'Whole image will be used — to crop, uncheck Keep aspect ratio and set a different width and height.';
+      if (wholeTarget) wholeText += ' Download will be ' + wholeTarget.w + ' × ' + wholeTarget.h + ' px.';
+      cropCaption.textContent = wholeText;
       return;
     }
     var src = cropSourceRect();
