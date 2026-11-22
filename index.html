@@ -62,6 +62,17 @@
       </div>
     </div>
 
+    <div class="crop-stage-wrap" id="cropStageWrap">
+      <div class="crop-stage" id="cropStage">
+        <img id="cropImg" alt="Image to crop" draggable="false">
+        <div class="crop-box" id="cropBox">
+          <span class="crop-handle tl"></span><span class="crop-handle tr"></span>
+          <span class="crop-handle bl"></span><span class="crop-handle br"></span>
+        </div>
+      </div>
+      <p class="crop-caption" id="cropCaption"></p>
+    </div>
+
     <div class="tool-divider"></div>
 
     <div class="settings">
@@ -136,7 +147,7 @@
     <h2>How to resize an image in 4 steps</h2>
     <ol class="steps">
       <li><h3>Choose your image</h3><p>Drag your image into the box above, or tap Select Image and pick a file from your device. You will see a preview with its original size right away.</p></li>
-      <li><h3>Set the dimensions</h3><p>Type the width or height you want in pixels, or switch to percent to shrink it by a percentage. Keep aspect ratio is on by default, so your picture never gets stretched.</p></li>
+      <li><h3>Set the dimensions</h3><p>Type the width or height you want in pixels, or switch to percent to shrink it by a percentage. Keep aspect ratio is on by default, so your picture never gets stretched. A crop box appears over your preview, showing exactly what will be kept — drag it to choose the part of the picture that matters most.</p></li>
       <li><h3>Pick a format and a target size</h3><p>Choose JPG for photos, PNG when you need transparency, or WebP for the smallest files. If the file must stay under a certain size, enter a target file size and we will adjust the quality to fit it.</p></li>
       <li><h3>Resize and download</h3><p>Tap Resize Image, check the preview and the new file size, then download your resized copy. Want another size? Tap Resize another image and start again.</p></li>
     </ol>
@@ -192,6 +203,8 @@
     <p>PNG is lossless, so it cannot trade quality for size the way JPG and WebP can. If you need a small file, switch the format to JPG or WebP and set a target file size.</p></details>
     <details><summary>Can I make an image bigger?</summary>
     <p>Yes — you can enter dimensions larger than the original, or a percent over 100%. But an enlarged image will look softer and blurrier than the original, because no new detail can be added.</p></details>
+    <details><summary>Can I choose which part of the image is kept?</summary>
+    <p>Yes. When you set dimensions with a different shape than your image, a crop box appears over the preview. Drag it to the part you want to keep — only that area is resized and downloaded. If you keep the original shape, the whole image is used and no crop is needed.</p></details>
     <details><summary>What does target file size do?</summary>
     <p>It is optional. If you set one, the tool lowers the JPG or WebP quality just enough to get the file under that size. If even the lowest quality is still over your target, it tells you so and gives you the smallest file it can make.</p></details>
     <details><summary>Does it work on my phone?</summary>

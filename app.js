@@ -48,11 +48,17 @@
   var resultNote = $('resultNote');
   var downloadBtn = $('downloadBtn');
   var againLink = $('againLink');
+  var cropStageWrap = $('cropStageWrap');
+  var cropStage = $('cropStage');
+  var cropImg = $('cropImg');
+  var cropBox = $('cropBox');
+  var cropCaption = $('cropCaption');
 
   var orig = null; // { img, name, width, height, size }
   var resultUrl = null;
   var resultBlob = null;
   var resultFileName = '';
+  var crop = null; // { cx, cy, fw, fh } — crop box centre/size as fractions of the displayed image
 
   function formatBytes(n) {
     if (n < 1024) return n + ' B';
@@ -115,6 +121,9 @@
         dimHeight.value = img.naturalHeight;
         resultBox.classList.remove('show');
         setResizeEnabled(true);
+        cropImg.src = reader.result;
+        cropStageWrap.classList.add('show');
+        recomputeCrop(null);
       };
       img.onerror = function () {
         showError('Sorry, that image could not be opened. Please try a different image file.');
@@ -151,6 +160,9 @@
   }
   dimWidth.addEventListener('input', syncFromWidth);
   dimHeight.addEventListener('input', syncFromHeight);
+  dimWidth.addEventListener('input', function () { if (orig) recomputeCrop(crop); });
+  dimHeight.addEventListener('input', function () { if (orig) recomputeCrop(crop); });
+  keepAspect.addEventListener('change', function () { if (orig) recomputeCrop(crop); });
 
   dimUnit.addEventListener('change', function () {
     if (!orig) return;
@@ -164,22 +176,23 @@
       if (isFinite(h) && h > 0) dimHeight.value = Math.max(1, Math.round((h / 100) * orig.height));
     }
   });
+  dimUnit.addEventListener('change', function () { if (orig) recomputeCrop(crop); });
 
   /* Compute the target pixel size from the Dimensions fields.
-     Returns { w, h } or null (and shows an error). */
-  function computeTarget() {
+     Returns { w, h } or null (and shows an error, unless silent). */
+  function computeTarget(silent) {
     var wIn = parseFloat(dimWidth.value);
     var hIn = parseFloat(dimHeight.value);
     var wOk = isFinite(wIn) && wIn > 0;
     var hOk = isFinite(hIn) && hIn > 0;
     if (!wOk && !hOk) {
-      showError('Please enter a width or a height first — or both. Numbers only, larger than zero.');
+      if (!silent) showError('Please enter a width or a height first — or both. Numbers only, larger than zero.');
       return null;
     }
     var w, h;
     if (dimUnit.value === 'percent') {
       if (wIn > 500 || hIn > 500) {
-        showError('Percent cannot be more than 500%. Please enter a smaller value.');
+        if (!silent) showError('Percent cannot be more than 500%. Please enter a smaller value.');
         return null;
       }
       if (wOk && hOk) { w = (wIn / 100) * orig.width; h = (hIn / 100) * orig.height; }
@@ -193,15 +206,131 @@
     w = Math.max(1, Math.round(w));
     h = Math.max(1, Math.round(h));
     if (w > 8000 || h > 8000) {
-      showError('That size is too large — the longest side can be 8,000 px at most. Please enter smaller dimensions.');
+      if (!silent) showError('That size is too large — the longest side can be 8,000 px at most. Please enter smaller dimensions.');
       return null;
     }
     if (w * h > 100000000) {
-      showError('That size is too large — please keep the total under 100 megapixels.');
+      if (!silent) showError('That size is too large — please keep the total under 100 megapixels.');
       return null;
     }
     return { w: w, h: h };
   }
+
+  /* ---------- Draggable crop box ---------- */
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /* Target aspect ratio from the Dimensions fields (same math as
+     computeTarget, but silent). Falls back to the original image aspect
+     when no usable dimensions are set. */
+  function targetAspect() {
+    if (!orig) return null;
+    var t = computeTarget(true);
+    return t ? t.w / t.h : ratio();
+  }
+
+  function isWholeCrop() {
+    return !crop || (crop.fw >= 0.999 && crop.fh >= 0.999);
+  }
+
+  /* Crop region in ORIGINAL image pixels, clamped to the image. */
+  function cropSourceRect() {
+    if (!orig) return { sx: 0, sy: 0, sw: 0, sh: 0 };
+    if (!crop) return { sx: 0, sy: 0, sw: orig.width, sh: orig.height };
+    var sw = Math.round(crop.fw * orig.width);
+    var sh = Math.round(crop.fh * orig.height);
+    var sx = Math.round((crop.cx - crop.fw / 2) * orig.width);
+    var sy = Math.round((crop.cy - crop.fh / 2) * orig.height);
+    sx = clamp(sx, 0, orig.width - 1);
+    sy = clamp(sy, 0, orig.height - 1);
+    sw = clamp(sw, 1, orig.width - sx);
+    sh = clamp(sh, 1, orig.height - sy);
+    return { sx: sx, sy: sy, sw: sw, sh: sh };
+  }
+
+  function layoutCropBox() {
+    if (!orig || !crop) return;
+    var dw = cropImg.clientWidth, dh = cropImg.clientHeight;
+    if (!dw || !dh) return;
+    cropBox.style.left = ((crop.cx - crop.fw / 2) * dw) + 'px';
+    cropBox.style.top = ((crop.cy - crop.fh / 2) * dh) + 'px';
+    cropBox.style.width = (crop.fw * dw) + 'px';
+    cropBox.style.height = (crop.fh * dh) + 'px';
+  }
+
+  function updateCaption() {
+    if (!orig || !crop) return;
+    if (isWholeCrop()) {
+      cropCaption.textContent = 'Whole image will be used — to crop, uncheck Keep aspect ratio and set a different width and height.';
+      return;
+    }
+    var src = cropSourceRect();
+    var target = computeTarget(true);
+    var text = 'Crop area: ' + src.sw + ' × ' + src.sh + ' px of ' + orig.width + ' × ' + orig.height +
+      ' — drag the box to choose what stays.';
+    if (target) text += ' Download will be ' + target.w + ' × ' + target.h + ' px.';
+    cropCaption.textContent = text;
+  }
+
+  /* Recompute the box for the current target aspect. Largest rectangle of
+     that aspect fitting inside the displayed image; keeps the previous
+     relative centre when one is given, otherwise centres the box. */
+  function recomputeCrop(centre) {
+    if (!orig) return;
+    var dw = cropImg.clientWidth, dh = cropImg.clientHeight;
+    if (!dw || !dh) return;
+    var aspect = targetAspect();
+    var oa = ratio();
+    if (Math.abs(aspect - oa) / oa < 0.01) {
+      crop = { cx: 0.5, cy: 0.5, fw: 1, fh: 1 };
+    } else {
+      var bw = dw, bh = bw / aspect;
+      if (bh > dh) { bh = dh; bw = bh * aspect; }
+      var fw = bw / dw, fh = bh / dh;
+      var cx = centre ? centre.cx : 0.5;
+      var cy = centre ? centre.cy : 0.5;
+      crop = {
+        cx: clamp(cx, fw / 2, 1 - fw / 2),
+        cy: clamp(cy, fh / 2, 1 - fh / 2),
+        fw: fw, fh: fh
+      };
+    }
+    layoutCropBox();
+    updateCaption();
+  }
+
+  cropImg.addEventListener('load', function () {
+    if (orig && cropStageWrap.classList.contains('show')) recomputeCrop(null);
+  });
+
+  window.addEventListener('resize', function () { layoutCropBox(); });
+
+  /* Drag the box with mouse or touch (Pointer Events). */
+  var drag = null;
+  cropBox.addEventListener('pointerdown', function (e) {
+    if (!orig || !crop) return;
+    e.preventDefault();
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, cx: crop.cx, cy: crop.cy };
+    cropBox.classList.add('dragging');
+    if (cropBox.setPointerCapture) {
+      try { cropBox.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+  });
+  cropBox.addEventListener('pointermove', function (e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var dw = cropImg.clientWidth, dh = cropImg.clientHeight;
+    if (!dw || !dh) return;
+    crop.cx = clamp(drag.cx + (e.clientX - drag.x) / dw, crop.fw / 2, 1 - crop.fw / 2);
+    crop.cy = clamp(drag.cy + (e.clientY - drag.y) / dh, crop.fh / 2, 1 - crop.fh / 2);
+    layoutCropBox();
+    updateCaption();
+  });
+  function endDrag() {
+    if (!drag) return;
+    drag = null;
+    cropBox.classList.remove('dragging');
+  }
+  cropBox.addEventListener('pointerup', endDrag);
+  cropBox.addEventListener('pointercancel', endDrag);
 
   function canvasToBlob(canvas, type, quality) {
     return new Promise(function (resolve) {
@@ -233,7 +362,8 @@
     canvas.height = target.h;
     var ctx = canvas.getContext('2d');
     if (format === 'jpg') { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, target.w, target.h); }
-    ctx.drawImage(orig.img, 0, 0, target.w, target.h);
+    var src = cropSourceRect();
+    ctx.drawImage(orig.img, src.sx, src.sy, src.sw, src.sh, 0, 0, target.w, target.h);
 
     var targetBytes = null;
     var tVal = parseFloat(targetSize.value);
@@ -255,7 +385,13 @@
       resultImg.alt = 'Resized image — ' + target.w + ' by ' + target.h + ' pixels';
       resultDims.textContent = 'New size: ' + target.w + ' × ' + target.h + ' px · ' + formatBytes(blob.size) +
         ' (was ' + orig.width + ' × ' + orig.height + ' px · ' + formatBytes(orig.size) + ')';
-      if (note) { resultNote.textContent = note; resultNote.classList.add('show'); }
+      var notes = [];
+      if (!isWholeCrop()) {
+        notes.push('Cropped to ' + src.sw + ' × ' + src.sh + ' px, then resized to ' + target.w + ' × ' + target.h + ' px.');
+      }
+      if (note) notes.push(note);
+      var finalNote = notes.join(' ');
+      if (finalNote) { resultNote.textContent = finalNote; resultNote.classList.add('show'); }
       else { resultNote.classList.remove('show'); resultNote.textContent = ''; }
       resultBox.classList.add('show');
       resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -306,6 +442,9 @@
     orig = null;
     if (resultUrl) { URL.revokeObjectURL(resultUrl); resultUrl = null; }
     resultBlob = null;
+    crop = null;
+    cropStageWrap.classList.remove('show');
+    cropCaption.textContent = '';
     fileInfo.classList.remove('show');
     resultBox.classList.remove('show');
     dimWidth.value = '';
