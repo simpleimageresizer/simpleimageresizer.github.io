@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100×100 Pixels Image Resize - Resize Images Online Free</title>
+<meta name="description" content="Resize any image to 100 × 100 pixels free — small thumbnails and avatars. Fast and private, right in your browser, no upload, no sign-up, no watermark.">
+<meta name="google-site-verification" content="_-BRUVU3ety-sxMiKPLYXIAc3S__Jb0sioMftiq5Fuo" />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L9E8XYBW71"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-L9E8XYBW71');
+</script>
+<meta name="keywords" content="100x100 image resize, resize image to 100x100, 100x100 pixels, small thumbnails and avatars">
+<link rel="canonical" href="https://simpleimageresizer.github.io/100x100-pixels-image-resize.html">
+<meta property="og:title" content="100×100 Pixels Image Resize - Resize Images Online Free">
+<meta property="og:description" content="Resize images to 100 × 100 px free in your browser — no upload, no sign-up.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://simpleimageresizer.github.io/100x100-pixels-image-resize.html">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖼️</text></svg>">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="https://simpleimageresizer.github.io/"><span class="mark">🖼️</span>Image<b> Resizer</b></a>
+    <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="main">
+      <a href="https://simpleimageresizer.github.io/">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>100×100 Pixels Image Resize</h1>
+    <p class="lede">Resize any image to 100 × 100 pixels — small thumbnails and avatars — free in your browser. No upload, no sign-up.</p>
+  </div>
+
+<div class="tool-card" id="tool">
+    <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Choose an image to resize">
+      <span class="drop-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M6 11l6 6 6-6"/><path d="M4 21h16"/></svg>
+      </span>
+      <p class="drop-text">Drag and drop your image here or click to browse</p>
+      <button type="button" class="btn-purple" id="selectImageBtn">Select Image</button>
+      <input type="file" id="fileInput" accept="image/*" hidden>
+    </div>
+
+    <div class="file-info" id="fileInfo">
+      <img id="previewImg" alt="Your chosen image">
+      <div>
+        <div class="file-name" id="fileName"></div>
+        <div class="file-meta" id="fileMeta"></div>
+      </div>
+    </div>
+
+    <div class="crop-stage-wrap" id="cropStageWrap">
+      <div class="crop-stage" id="cropStage">
+        <img id="cropImg" alt="Image to crop" draggable="false">
+        <div class="crop-box" id="cropBox">
+          <span class="crop-handle tl"></span><span class="crop-handle tr"></span>
+          <span class="crop-handle bl"></span><span class="crop-handle br"></span>
+        </div>
+      </div>
+      <p class="crop-caption" id="cropCaption"></p>
+    </div>
+
+    <div class="tool-divider"></div>
+
+    <div class="settings">
+      <div class="setting-row">
+        <label for="dimWidth">Dimensions</label>
+        <div class="setting-controls">
+          <div class="dim-inputs">
+            <input type="number" id="dimWidth" placeholder="Width" value="100" min="1" aria-label="Width">
+            <span class="times" aria-hidden="true">×</span>
+            <input type="number" id="dimHeight" placeholder="Height" value="100" min="1" aria-label="Height">
+            <select id="dimUnit" aria-label="Dimension unit">
+              <option value="pixel" selected>pixel</option>
+              <option value="percent">percent</option>
+            </select>
+          </div>
+          <label class="keep-aspect"><input type="checkbox" id="keepAspect"> Keep aspect ratio</label>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label for="formatSelect">Format</label>
+        <div class="setting-controls">
+          <select id="formatSelect" class="wide">
+            <option value="jpg" selected>JPG</option>
+            <option value="png">PNG</option>
+            <option value="webp">WebP</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label">Target File Size
+          <span class="help-icon" tabindex="0">?<span class="help-tip">Optional. We lower the quality just enough to get the file under this size. It works for JPG and WebP. PNG is lossless, so a target size does not apply to it.</span></span>
+        </span>
+        <div class="setting-controls">
+          <div class="target-inputs">
+            <input type="number" id="targetSize" placeholder="Leave empty for no limit" min="0" step="any" aria-label="Target file size">
+            <select id="targetUnit" aria-label="Target file size unit">
+              <option value="mb" selected>MB</option>
+              <option value="kb">KB</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="resize-action">
+      <button type="button" class="btn-purple resize-btn" id="resizeBtn" disabled>Resize Image</button>
+      <p class="resize-hint" id="resizeHint">Choose an image first to resize it.</p>
+      <p class="error-box" id="errorBox" role="alert"></p>
+    </div>
+
+    <div class="result" id="resultBox">
+      <h3>Your resized image</h3>
+      <img id="resultImg" alt="Resized image">
+      <p class="result-meta" id="resultDims"></p>
+      <p class="result-note" id="resultNote"></p>
+      <div class="result-actions">
+        <button type="button" class="btn-purple" id="downloadBtn">Download</button>
+        <button type="button" class="link-btn" id="againLink">Resize another image</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="block">
+    <h2>What is a 100 × 100 image?</h2>
+    <p>100 × 100 pixels is a classic small thumbnail and avatar size — forum avatars, comment pictures and tiny product thumbnails are often exactly this size.</p>
+    <p>Because it is square, it fits profile pictures, product grids and social posts without cropping.</p>
+  </section>
+
+  <section class="block">
+    <h2>How to resize an image to 100 × 100 in 4 steps</h2>
+    <ol class="steps">
+      <li><h3>Choose your image</h3><p>Drag your image into the box above, or tap Select Image and pick a file from your device. You will see a preview with its original size right away.</p></li>
+      <li><h3>Set the size — already filled in</h3><p>The width and height are already set to 100 × 100 for you, so you can resize straight away. A square crop box appears over your preview — drag it to choose the square part of your picture. Only the area inside the box is downloaded, so nothing gets stretched. Keep aspect ratio is off by default, so the two numbers stay exactly as you set them.</p></li>
+      <li><h3>Pick a format and a target size</h3><p>Choose JPG for photos, PNG when you need transparency, or WebP for the smallest files. If the file must stay under a certain size, enter a target file size and the tool will adjust the quality to fit it.</p></li>
+      <li><h3>Resize and download</h3><p>Tap Resize Image, check the preview and the new file size, then download your resized copy. Your download will be exactly 100 × 100 pixels. Want another size? Tap Resize another image and start again.</p></li>
+    </ol>
+  </section>
+
+  <section class="block">
+    <h2>Which format is best for a 100 × 100 image?</h2>
+    <p>JPG is the best default for a 100 × 100 avatar — small files and good quality. Pick PNG if the picture has text or sharp edges, and WebP if you want the smallest file.</p>
+  </section>
+
+  <section class="block">
+    <h2>Tips for a sharp 100 × 100 image</h2>
+    <ul class="tips">
+      <li>Start from the original, highest-quality file — resizing a copy of a copy loses detail twice.</li>
+      <li>Turn Keep aspect ratio on if you want to keep the original shape — with it off, a square target can stretch a wide photo.</li>
+      <li>Start from the largest original you have — shrinking a big image to 100 × 100 stays sharp, but enlarging a small one will look soft.</li>
+      <li>For photos, JPG at the default quality is plenty for the web; only raise it if you can see the difference.</li>
+    </ul>
+  </section>
+
+  <section class="block faq">
+    <h2>Frequently asked questions</h2>
+    <details><summary>Where is 100×100 used?</summary>
+    <p>Forum avatars, comment pictures, small product thumbnails and app list icons are often exactly 100 × 100 pixels.</p></details>
+    <details><summary>Is 100×100 big enough for a profile picture?</summary>
+    <p>For a small avatar shown in a comment or a list, yes. For a full profile page photo, use 400 × 400 or larger.</p></details>
+    <details><summary>Will resizing to 100 × 100 stretch my image?</summary>
+    <p>No — when your image has a different shape, a crop box appears over the preview. Drag it to the part you want to keep, and the download is exactly 100 × 100 pixels with no stretching.</p></details>
+    <details><summary>What file size will a 100 × 100 image be?</summary>
+    <p>Very small — a 100 × 100 image is usually just a few kilobytes as a PNG, and even smaller as a JPG.</p></details>
+    <details><summary>Can I resize to 100 × 100 on my phone?</summary>
+    <p>Yes. The tool works in any modern browser on phones, tablets, laptops and desktops — no app to install.</p></details>
+  </section>
+
+  <div class="cta">
+    <h2>Resize an image to 100 × 100</h2>
+    <p>Free, private, right here in your browser — no upload, no sign-up.</p>
+    <a class="btn" href="#tool">Resize an Image</a>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>© 2026 ImageResizer — Free online image resizer tool.</span>
+    <nav>
+      <a href="https://simpleimageresizer.github.io/">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </nav>
+  </div>
+</footer>
+<script src="app.js"></script>
+<script>
+/* Dimension preset for this page: keep the tool set to 100 × 100. The tool
+   fills the Width/Height fields with the uploaded image's own size, so
+   this re-applies the page size (through the same input events app.js
+   listens to) whenever an image is loaded, keeping the crop box at the
+   page's aspect ratio. */
+(function () {
+  var PRESET_W = 100, PRESET_H = 100;
+  var wEl = document.getElementById('dimWidth');
+  var hEl = document.getElementById('dimHeight');
+  var wrap = document.getElementById('cropStageWrap');
+  if (!wEl || !hEl) return;
+  function applyPreset() {
+    wEl.value = PRESET_W;
+    hEl.value = PRESET_H;
+    wEl.dispatchEvent(new Event('input', { bubbles: true }));
+    hEl.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  applyPreset();
+  if (wrap && window.MutationObserver) {
+    var shown = false;
+    new MutationObserver(function () {
+      var isShown = wrap.classList.contains('show');
+      if (isShown && !shown) { shown = true; applyPreset(); }
+      else if (!isShown) { shown = false; }
+    }).observe(wrap, { attributes: true, attributeFilter: ['class'] });
+  }
+})();
+</script>
+</body>
+</html>
